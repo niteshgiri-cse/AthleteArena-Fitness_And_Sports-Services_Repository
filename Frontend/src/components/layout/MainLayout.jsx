@@ -1,10 +1,10 @@
 import { Outlet, useLocation } from "react-router-dom";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
+import AIChatbot from "./AIChatbot";
 
 
 export default function MainLayout() {
-
   const location = useLocation();
 
   const showFooter = location.pathname === "/";
@@ -17,8 +17,9 @@ export default function MainLayout() {
         <Outlet />
       </main>
 
-      {/* 🔥 CONDITIONAL FOOTER */}
       {showFooter && <Footer />}
+
+      <AIChatbot />
     </>
   );
 }

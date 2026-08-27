@@ -1,91 +1,1104 @@
 import { useEffect, useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import {
+  ArrowRight,
+  ArrowUpRight,
+  CalendarDays,
+  CheckCircle2,
+  ChevronRight,
+  Dumbbell,
+  Menu,
+  Play,
+  Trophy,
+  Users,
+  Video,
+  X,
+  BookOpen,
+  Search,
+  Bell,
+  Sparkles,
+  Target,
+  Zap,
+} from "lucide-react";
+
 import athleteImg from "../../assets/landingPage.png";
-import Navbar from "../../components/layout/Navbar";
 
 const slides = [
   {
-    title: "TOP SCORER TO THE FINAL",
-    highlight: "MATCH",
-    desc: "The EuroLeague Finals Top Scorer is the individual award presented to the player who scores the highest points in the final match of the season.",
+    eyebrow: "ALL-IN-ONE PLATFORM FOR ATHLETES",
+    title: "Train. Compete.",
+    highlight: "Grow. Succeed.",
+    description:
+      "Everything athletes need to train smarter, connect with experts, discover opportunities, and become their best.",
   },
   {
-    title: "CHAMPIONS LEAGUE",
-    highlight: "WINNER",
-    desc: "The championship title was secured after an intense final match filled with passion, determination, and world-class performance.",
+    eyebrow: "BUILT FOR EVERY ATHLETE",
+    title: "Your Game.",
+    highlight: "Your Journey.",
+    description:
+      "Access structured training, live coaching, sports events, learning resources, and a community built around your goals.",
+  },
+  {
+    eyebrow: "TURN POTENTIAL INTO PERFORMANCE",
+    title: "Prepare. Perform.",
+    highlight: "Achieve More.",
+    description:
+      "Build your skills, track your progress, compete in events, and take your athletic journey to the next level.",
+  },
+];
+
+const stats = [
+  {
+    value: "50K+",
+    label: "Active Athletes",
+    icon: Users,
+    iconClass: "bg-violet-100 text-violet-600",
+  },
+  {
+    value: "200+",
+    label: "Courses",
+    icon: BookOpen,
+    iconClass: "bg-emerald-100 text-emerald-600",
+  },
+  {
+    value: "500+",
+    label: "Events",
+    icon: Trophy,
+    iconClass: "bg-orange-100 text-orange-600",
+  },
+  {
+    value: "100+",
+    label: "Expert Coaches",
+    icon: Target,
+    iconClass: "bg-blue-100 text-blue-600",
+  },
+];
+
+const features = [
+  {
+    title: "Training Programs",
+    description:
+      "Personalized training programs designed for athletes at every level.",
+    icon: Dumbbell,
+    iconClass: "bg-violet-100 text-violet-600",
+    href: "/training-guides",
+  },
+  {
+    title: "Live Coaching",
+    description:
+      "Learn directly from experienced coaches through interactive sessions.",
+    icon: Video,
+    iconClass: "bg-rose-100 text-rose-600",
+    href: "/live-learning",
+  },
+  {
+    title: "Courses & Learning",
+    description:
+      "Explore structured courses and improve your knowledge across sports.",
+    icon: BookOpen,
+    iconClass: "bg-blue-100 text-blue-600",
+    href: "/live-learning",
+  },
+  {
+    title: "Events & Tournaments",
+    description:
+      "Discover competitions and participate in exciting sporting events.",
+    icon: CalendarDays,
+    iconClass: "bg-emerald-100 text-emerald-600",
+    href: "/live-events",
+  },
+  {
+    title: "Athlete Community",
+    description:
+      "Connect, share experiences, and grow with athletes worldwide.",
+    icon: Users,
+    iconClass: "bg-orange-100 text-orange-600",
+    href: "/community",
+  },
+];
+
+const testimonials = [
+  {
+    name: "Sarah Johnson",
+    role: "Professional Runner",
+    quote:
+      "AthleteArena helped me connect with coaches and improve my training. The platform feels built for athletes.",
+    rating: 5,
+  },
+  {
+    name: "Michael Brown",
+    role: "Football Player",
+    quote:
+      "The training programs and live events are excellent. I found opportunities I never knew existed.",
+    rating: 5,
+  },
+  {
+    name: "Emily Davis",
+    role: "Yoga Instructor",
+    quote:
+      "A great community of athletes supporting each other. The learning experience is simple and powerful.",
+    rating: 5,
   },
 ];
 
 export default function HomePage() {
   const [current, setCurrent] = useState(0);
+  const [mobileMenu, setMobileMenu] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const checkAuth = () => {
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        setIsLoggedIn(false);
+        return;
+      }
+
+      try {
+        const parts = token.split(".");
+
+        if (parts.length !== 3) {
+          localStorage.removeItem("token");
+          setIsLoggedIn(false);
+          return;
+        }
+
+        const decoded = JSON.parse(atob(parts[1]));
+
+        if (
+          decoded.exp &&
+          decoded.exp * 1000 <= Date.now()
+        ) {
+          localStorage.removeItem("token");
+          localStorage.removeItem("roles");
+          setIsLoggedIn(false);
+          return;
+        }
+
+        setIsLoggedIn(true);
+      } catch {
+        localStorage.removeItem("token");
+        localStorage.removeItem("roles");
+        setIsLoggedIn(false);
+      }
+    };
+
+    checkAuth();
+  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrent((prev) => (prev + 1) % slides.length);
-    }, 4000);
+    }, 5000);
 
     return () => clearInterval(interval);
   }, []);
 
+  const handleGetStarted = () => {
+    if (isLoggedIn) {
+      navigate("/sport-category");
+    } else {
+      navigate("/auth");
+    }
+  };
+
+  const handleExploreEvents = () => {
+    if (isLoggedIn) {
+      navigate("/live-events");
+    } else {
+      navigate("/auth");
+    }
+  };
+
   return (
-    <div className="w-full min-h-screen">
+    <div className="min-h-screen bg-white text-slate-900 overflow-x-hidden">
 
-      <Navbar />
+      {/* =========================
+          NAVBAR
+      ========================== */}
 
-      <div className="w-full h-[calc(100vh-64px)] overflow-hidden">
+      <header className="sticky top-0 z-50 border-b border-slate-100/80 bg-white/90 backdrop-blur-xl">
 
-        <div
-          className="relative w-full h-full flex items-center bg-cover bg-center"
-          style={{
-            backgroundImage: `url(${athleteImg})`,
-          }}
-        >
+        <div className="mx-auto max-w-7xl px-5 lg:px-8">
 
-          <div className="absolute inset-0 bg-black/20 backdrop-brightness-75" />
+          <div className="flex h-[72px] items-center justify-between">
 
-          <div className="relative z-10 text-white px-6 md:px-20 max-w-3xl transition-all duration-500">
-
-            <h2 className="text-3xl md:text-6xl font-extrabold leading-tight mb-6 tracking-wide">
-              {slides[current].title}{" "}
-              <span className="text-blue-400">
-                {slides[current].highlight}
-              </span>
-            </h2>
-
-            <div className="w-20 h-1 bg-blue-500 mb-6 rounded-full" />
-
-            <p className="text-base md:text-lg mb-10 text-gray-200 leading-relaxed">
-              {slides[current].desc}
-            </p>
+            {/* LOGO */}
 
             <NavLink
-              to="/auth"
-              className="inline-block px-8 py-3 bg-linear-to-r from-blue-600 to-blue-500 text-white rounded-full hover:scale-105 transition"
+              to="/"
+              className="flex items-center gap-2 group shrink-0"
             >
-              Get Started →
+              <div className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-violet-600 to-blue-500 shadow-lg shadow-violet-200 group-hover:scale-105 transition-transform">
+
+                <span className="text-xl font-black text-white">
+                  A
+                </span>
+
+              </div>
+
+              <div className="text-xl font-extrabold tracking-tight text-slate-950">
+                ATHLETE
+                <span className="bg-gradient-to-r from-violet-600 to-blue-500 bg-clip-text text-transparent">
+                  ARENA
+                </span>
+              </div>
             </NavLink>
+
+            {/* DESKTOP NAV */}
+
+            <nav className="hidden lg:flex items-center gap-1">
+
+              <NavLink
+                to="/"
+                className="px-4 py-2.5 rounded-xl text-sm font-semibold text-violet-600 bg-violet-50"
+              >
+                Home
+              </NavLink>
+
+              {[
+                ["Category", "/sport-category"],
+                ["Community", "/community"],
+                ["Events", "/live-events"],
+                ["Services", "/services"],
+                ["Live Learning", "/live-learning"],
+                ["News", "/recent-new"],
+              ].map(([name, href]) => (
+                <NavLink
+                  key={name}
+                  to={href}
+                  className="px-4 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:text-slate-950 hover:bg-slate-50 transition-all"
+                >
+                  {name}
+                </NavLink>
+              ))}
+
+            </nav>
+
+            {/* RIGHT */}
+
+            <div className="flex items-center gap-2">
+
+              <button
+                className="hidden sm:flex h-10 w-10 items-center justify-center rounded-xl text-slate-600 hover:bg-slate-100 hover:text-slate-950 transition"
+                aria-label="Search"
+              >
+                <Search size={19} />
+              </button>
+
+              {isLoggedIn && (
+                <button
+                  className="hidden sm:flex relative h-10 w-10 items-center justify-center rounded-xl text-slate-600 hover:bg-slate-100 transition"
+                  aria-label="Notifications"
+                >
+                  <Bell size={19} />
+
+                  <span className="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-violet-600" />
+                </button>
+              )}
+
+              {!isLoggedIn ? (
+                <button
+                  onClick={() => navigate("/auth")}
+                  className="hidden sm:flex items-center gap-2 rounded-xl bg-slate-950 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-slate-200 hover:bg-violet-600 hover:shadow-violet-200 transition-all"
+                >
+                  Login
+                  <ArrowRight size={16} />
+                </button>
+              ) : (
+                <button
+                  onClick={() => navigate("/userProfile")}
+                  className="hidden sm:flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-800 hover:border-violet-200 hover:bg-violet-50 transition"
+                >
+                  Profile
+                  <ArrowUpRight size={16} />
+                </button>
+              )}
+
+              {/* MOBILE BUTTON */}
+
+              <button
+                onClick={() => setMobileMenu(!mobileMenu)}
+                className="lg:hidden flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-50 transition"
+                aria-label="Toggle menu"
+              >
+                {mobileMenu ? (
+                  <X size={21} />
+                ) : (
+                  <Menu size={21} />
+                )}
+              </button>
+
+            </div>
 
           </div>
 
-          <div className="absolute right-6 top-1/2 -translate-y-1/2 flex flex-col gap-4">
+          {/* MOBILE MENU */}
 
-            {slides.map((_, index) => (
-              <div
-                key={index}
-                onClick={() => setCurrent(index)}
-                className={`w-1 rounded-full cursor-pointer ${
-                  current === index
-                    ? "h-14 bg-white"
-                    : "h-6 bg-gray-400"
-                }`}
-              />
-            ))}
+          <div
+            className={`lg:hidden overflow-hidden transition-all duration-300 ${
+              mobileMenu
+                ? "max-h-[600px] opacity-100 pb-5"
+                : "max-h-0 opacity-0"
+            }`}
+          >
+
+            <div className="rounded-2xl border border-slate-100 bg-slate-50/80 p-2">
+
+              {[
+                ["Home", "/"],
+                ["Category", "/sport-category"],
+                ["Community", "/community"],
+                ["Events", "/live-events"],
+                ["Services", "/services"],
+                ["Live Learning", "/live-learning"],
+                ["News", "/recent-new"],
+              ].map(([name, href]) => (
+                <NavLink
+                  key={name}
+                  to={href}
+                  onClick={() => setMobileMenu(false)}
+                  className="flex items-center justify-between rounded-xl px-4 py-3 text-sm font-medium text-slate-700 hover:bg-white hover:text-violet-600 transition"
+                >
+                  {name}
+                  <ChevronRight size={16} />
+                </NavLink>
+              ))}
+
+              {!isLoggedIn ? (
+                <button
+                  onClick={() => {
+                    setMobileMenu(false);
+                    navigate("/auth");
+                  }}
+                  className="mt-2 flex w-full items-center justify-center gap-2 rounded-xl bg-slate-950 px-4 py-3 text-sm font-semibold text-white"
+                >
+                  Login
+                  <ArrowRight size={16} />
+                </button>
+              ) : (
+                <button
+                  onClick={() => {
+                    setMobileMenu(false);
+                    navigate("/userProfile");
+                  }}
+                  className="mt-2 flex w-full items-center justify-center gap-2 rounded-xl bg-violet-600 px-4 py-3 text-sm font-semibold text-white"
+                >
+                  My Profile
+                  <ArrowUpRight size={16} />
+                </button>
+              )}
+
+            </div>
 
           </div>
 
         </div>
 
-      </div>
+      </header>
+
+      {/* =========================
+          HERO
+      ========================== */}
+
+      <main>
+
+        <section className="relative overflow-hidden">
+
+          <div className="absolute -left-40 top-20 h-96 w-96 rounded-full bg-violet-100/50 blur-3xl" />
+
+          <div className="absolute -right-40 top-40 h-96 w-96 rounded-full bg-blue-100/50 blur-3xl" />
+
+          <div className="mx-auto max-w-7xl px-5 lg:px-8">
+
+            <div className="grid min-h-[650px] items-center gap-10 py-14 lg:grid-cols-[0.92fr_1.08fr] lg:py-20">
+
+              {/* LEFT */}
+
+              <div className="relative z-10">
+
+                <div className="mb-7 inline-flex items-center gap-2 rounded-full border border-violet-100 bg-violet-50 px-4 py-2 text-xs font-bold tracking-wide text-violet-600">
+                  <Sparkles size={14} />
+                  {slides[current].eyebrow}
+                </div>
+
+                <h1 className="max-w-2xl text-5xl font-black leading-[1.03] tracking-[-0.04em] text-slate-950 sm:text-6xl lg:text-[70px]">
+
+                  {slides[current].title}
+
+                  <br />
+
+                  <span className="bg-gradient-to-r from-violet-600 via-purple-600 to-blue-500 bg-clip-text text-transparent">
+                    {slides[current].highlight}
+                  </span>
+
+                </h1>
+
+                <p className="mt-7 max-w-xl text-base leading-7 text-slate-500 sm:text-lg">
+                  {slides[current].description}
+                </p>
+
+                <div className="mt-9 flex flex-wrap gap-3">
+
+                  <button
+                    onClick={handleGetStarted}
+                    className="group flex items-center gap-3 rounded-2xl bg-gradient-to-r from-violet-600 to-blue-500 px-6 py-3.5 text-sm font-bold text-white shadow-xl shadow-violet-200 hover:-translate-y-0.5 hover:shadow-2xl hover:shadow-violet-200 transition-all"
+                  >
+                    Get Started
+
+                    <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white/20 group-hover:translate-x-1 transition">
+                      <ArrowRight size={15} />
+                    </span>
+                  </button>
+
+                  <button
+                    onClick={handleExploreEvents}
+                    className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-6 py-3.5 text-sm font-bold text-slate-800 shadow-sm hover:border-violet-200 hover:bg-violet-50 transition-all"
+                  >
+                    Explore Events
+                    <CalendarDays size={17} />
+                  </button>
+
+                </div>
+
+                {/* TRUST */}
+
+                <div className="mt-10 flex items-center gap-4">
+
+                  <div className="flex -space-x-2">
+
+                    {["S", "M", "E", "A"].map(
+                      (letter, index) => (
+                        <div
+                          key={index}
+                          className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-white bg-gradient-to-br from-violet-400 to-blue-500 text-xs font-bold text-white"
+                        >
+                          {letter}
+                        </div>
+                      )
+                    )}
+
+                    <div className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-white bg-slate-950 text-xs font-bold text-white">
+                      +
+                    </div>
+
+                  </div>
+
+                  <div>
+                    <div className="flex items-center gap-1 text-yellow-500">
+                      ★★★★★
+                    </div>
+
+                    <p className="text-xs text-slate-500">
+                      Trusted by athletes worldwide
+                    </p>
+                  </div>
+
+                </div>
+
+                {/* SLIDE INDICATORS */}
+
+                <div className="mt-9 flex items-center gap-2">
+
+                  {slides.map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setCurrent(index)}
+                      className={`h-1.5 rounded-full transition-all ${
+                        current === index
+                          ? "w-10 bg-violet-600"
+                          : "w-2 bg-slate-200"
+                      }`}
+                    />
+                  ))}
+
+                </div>
+
+              </div>
+
+              {/* RIGHT IMAGE */}
+
+              <div className="relative flex min-h-[430px] items-center justify-center lg:min-h-[570px]">
+
+                <div className="absolute h-[400px] w-[400px] rounded-full bg-gradient-to-br from-violet-100 via-white to-blue-100 blur-2xl sm:h-[500px] sm:w-[500px]" />
+
+                <div className="absolute right-5 top-10 h-20 w-20 rounded-full border border-violet-100 bg-violet-50/70" />
+
+                <div className="absolute bottom-16 left-5 h-16 w-16 rounded-full border border-blue-100 bg-blue-50/70" />
+
+                <div className="relative z-10 w-full max-w-[620px]">
+
+                  <img
+                    src={athleteImg}
+                    alt="Athlete Arena"
+                    className="h-auto w-full object-contain drop-shadow-[0_30px_50px_rgba(76,29,149,0.16)]"
+                  />
+
+                  {/* LIVE EVENTS CARD */}
+
+                  <div className="absolute left-0 top-16 rounded-2xl border border-white bg-white/95 px-4 py-3 shadow-xl shadow-slate-200/70 backdrop-blur-md sm:left-4">
+
+                    <div className="flex items-center gap-3">
+
+                      <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-rose-50 text-rose-500">
+                        <Zap size={17} />
+                      </div>
+
+                      <div>
+                        <p className="text-[10px] font-medium text-slate-400">
+                          Live Events
+                        </p>
+
+                        <p className="text-lg font-black text-slate-900">
+                          24 / 7
+                        </p>
+                      </div>
+
+                    </div>
+
+                  </div>
+
+                  {/* ATHLETES CARD */}
+
+                  <div className="absolute right-0 top-12 rounded-2xl border border-white bg-white/95 px-4 py-3 shadow-xl shadow-slate-200/70 backdrop-blur-md sm:right-2">
+
+                    <div className="flex items-center gap-3">
+
+                      <div>
+                        <p className="text-[10px] font-medium text-slate-400">
+                          Active Athletes
+                        </p>
+
+                        <p className="text-lg font-black text-slate-900">
+                          50K+
+                        </p>
+                      </div>
+
+                      <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-violet-50 text-violet-600">
+                        <Users size={17} />
+                      </div>
+
+                    </div>
+
+                  </div>
+
+                  {/* TRAINING CARD */}
+
+                  <div className="absolute bottom-10 left-1/2 -translate-x-1/2 rounded-2xl border border-white bg-white/95 px-5 py-3 shadow-xl shadow-slate-200/70 backdrop-blur-md">
+
+                    <div className="flex items-center gap-3">
+
+                      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
+                        <Dumbbell size={18} />
+                      </div>
+
+                      <div>
+                        <p className="text-[10px] font-medium text-slate-400">
+                          Training Programs
+                        </p>
+
+                        <p className="text-lg font-black text-slate-900">
+                          120+
+                        </p>
+                      </div>
+
+                    </div>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </section>
+
+        {/* =========================
+            STATS
+        ========================== */}
+
+        <section className="relative z-20 px-5 lg:px-8">
+
+          <div className="mx-auto max-w-6xl">
+
+            <div className="grid overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-[0_20px_60px_rgba(15,23,42,0.07)] sm:grid-cols-2 lg:grid-cols-4">
+
+              {stats.map((stat, index) => {
+                const Icon = stat.icon;
+
+                return (
+                  <div
+                    key={stat.label}
+                    className={`flex items-center gap-4 px-6 py-6 ${
+                      index !== 0
+                        ? "border-t border-slate-100 sm:border-l sm:border-t-0"
+                        : ""
+                    }`}
+                  >
+
+                    <div
+                      className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl ${stat.iconClass}`}
+                    >
+                      <Icon size={21} />
+                    </div>
+
+                    <div>
+                      <p className="text-xl font-black text-slate-950">
+                        {stat.value}
+                      </p>
+
+                      <p className="text-xs font-medium text-slate-500">
+                        {stat.label}
+                      </p>
+                    </div>
+
+                  </div>
+                );
+              })}
+
+            </div>
+
+          </div>
+
+        </section>
+
+        {/* =========================
+            FEATURES
+        ========================== */}
+
+        <section className="mx-auto max-w-7xl px-5 py-24 lg:px-8">
+
+          <div className="mb-12 flex flex-col justify-between gap-5 md:flex-row md:items-end">
+
+            <div>
+
+              <p className="mb-3 text-xs font-black uppercase tracking-[0.2em] text-violet-600">
+                Everything you need
+              </p>
+
+              <h2 className="max-w-2xl text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">
+                One platform.
+                <span className="text-violet-600">
+                  {" "}Every athletic goal.
+                </span>
+              </h2>
+
+            </div>
+
+            <p className="max-w-md text-sm leading-6 text-slate-500">
+              From structured training to live coaching and competitions,
+              AthleteArena brings your complete athletic journey together.
+            </p>
+
+          </div>
+
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-5">
+
+            {features.map((feature) => {
+              const Icon = feature.icon;
+
+              return (
+                <NavLink
+                  key={feature.title}
+                  to={feature.href}
+                  className="group relative min-h-[225px] rounded-3xl border border-slate-100 bg-white p-6 shadow-sm hover:-translate-y-1 hover:border-violet-100 hover:shadow-xl hover:shadow-violet-100/40 transition-all"
+                >
+
+                  <div
+                    className={`mb-8 flex h-11 w-11 items-center justify-center rounded-2xl ${feature.iconClass}`}
+                  >
+                    <Icon size={19} />
+                  </div>
+
+                  <h3 className="mb-3 text-base font-bold text-slate-950">
+                    {feature.title}
+                  </h3>
+
+                  <p className="text-sm leading-6 text-slate-500">
+                    {feature.description}
+                  </p>
+
+                  <div className="absolute bottom-5 right-5 flex h-8 w-8 items-center justify-center rounded-full border border-slate-200 text-slate-500 group-hover:border-violet-200 group-hover:bg-violet-600 group-hover:text-white transition-all">
+                    <ArrowUpRight size={15} />
+                  </div>
+
+                </NavLink>
+              );
+            })}
+
+          </div>
+
+        </section>
+
+        {/* =========================
+            WHY ATHLETE ARENA
+        ========================== */}
+
+        <section className="bg-slate-50/70">
+
+          <div className="mx-auto max-w-7xl px-5 py-24 lg:px-8">
+
+            <div className="grid items-center gap-14 lg:grid-cols-[0.8fr_1.2fr]">
+
+              {/* LEFT */}
+
+              <div>
+
+                <p className="mb-3 text-xs font-black uppercase tracking-[0.2em] text-violet-600">
+                  Our Platform
+                </p>
+
+                <h2 className="text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">
+                  Why choose
+                  <br />
+                  <span className="text-violet-600">
+                    AthleteArena?
+                  </span>
+                </h2>
+
+                <p className="mt-6 max-w-lg text-base leading-7 text-slate-500">
+                  We bring everything an athlete needs into one connected
+                  experience — training, learning, opportunities, community,
+                  and growth.
+                </p>
+
+                <div className="mt-8 space-y-4">
+
+                  {[
+                    "World-class training resources",
+                    "Connect with athletes worldwide",
+                    "Discover events and opportunities",
+                    "Track your progress and goals",
+                  ].map((item) => (
+                    <div
+                      key={item}
+                      className="flex items-center gap-3"
+                    >
+                      <CheckCircle2
+                        size={19}
+                        className="shrink-0 text-violet-600"
+                      />
+
+                      <span className="text-sm font-medium text-slate-700">
+                        {item}
+                      </span>
+                    </div>
+                  ))}
+
+                </div>
+
+                <button
+                  onClick={handleGetStarted}
+                  className="mt-9 flex items-center gap-2 rounded-xl border border-violet-200 bg-white px-5 py-3 text-sm font-bold text-violet-600 hover:bg-violet-600 hover:text-white transition"
+                >
+                  Learn More
+                  <ArrowRight size={16} />
+                </button>
+
+              </div>
+
+              {/* RIGHT CARDS */}
+
+              <div className="grid gap-5 sm:grid-cols-3">
+
+                <div className="group overflow-hidden rounded-3xl bg-white shadow-sm">
+
+                  <div className="relative h-72 overflow-hidden bg-slate-900">
+
+                    <img
+                      src={athleteImg}
+                      alt="Live Events"
+                      className="h-full w-full object-cover object-center opacity-80 transition duration-500 group-hover:scale-105"
+                    />
+
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
+
+                    <div className="absolute inset-0 flex items-center justify-center">
+
+                      <div className="flex h-14 w-14 items-center justify-center rounded-full bg-white text-violet-600 shadow-xl group-hover:scale-110 transition">
+                        <Play
+                          size={19}
+                          fill="currentColor"
+                        />
+                      </div>
+
+                    </div>
+
+                  </div>
+
+                  <div className="p-5">
+
+                    <h3 className="font-bold text-slate-950">
+                      Live Events
+                    </h3>
+
+                    <p className="mt-2 text-sm leading-6 text-slate-500">
+                      Watch and participate in exciting sporting events.
+                    </p>
+
+                  </div>
+
+                </div>
+
+                <div className="group overflow-hidden rounded-3xl bg-white shadow-sm">
+
+                  <div className="relative h-72 overflow-hidden bg-gradient-to-br from-violet-100 to-blue-100">
+
+                    <div className="absolute inset-0 flex items-center justify-center">
+
+                      <div className="relative flex h-40 w-40 items-center justify-center rounded-full bg-white shadow-2xl">
+
+                        <Dumbbell
+                          size={52}
+                          className="text-violet-600"
+                        />
+
+                        <div className="absolute -right-3 top-4 flex h-10 w-10 items-center justify-center rounded-xl bg-violet-600 text-white shadow-lg">
+                          <Zap size={18} />
+                        </div>
+
+                      </div>
+
+                    </div>
+
+                  </div>
+
+                  <div className="p-5">
+
+                    <h3 className="font-bold text-slate-950">
+                      Expert Coaching
+                    </h3>
+
+                    <p className="mt-2 text-sm leading-6 text-slate-500">
+                      Learn from experienced coaches and athletes.
+                    </p>
+
+                  </div>
+
+                </div>
+
+                <div className="group overflow-hidden rounded-3xl bg-white shadow-sm">
+
+                  <div className="relative h-72 overflow-hidden bg-slate-950">
+
+                    <div className="absolute inset-0 bg-gradient-to-br from-violet-600 via-purple-700 to-blue-700 opacity-90" />
+
+                    <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-white/10 blur-xl" />
+
+                    <div className="absolute -bottom-10 -left-10 h-40 w-40 rounded-full bg-blue-400/20 blur-xl" />
+
+                    <div className="relative flex h-full flex-col items-center justify-center text-white">
+
+                      <Trophy size={54} />
+
+                      <p className="mt-4 text-2xl font-black">
+                        500+
+                      </p>
+
+                      <p className="text-sm text-white/70">
+                        Events & Opportunities
+                      </p>
+
+                    </div>
+
+                  </div>
+
+                  <div className="p-5">
+
+                    <h3 className="font-bold text-slate-950">
+                      Achieve Your Goals
+                    </h3>
+
+                    <p className="mt-2 text-sm leading-6 text-slate-500">
+                      Turn your potential into measurable progress.
+                    </p>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </section>
+
+        {/* =========================
+            TESTIMONIALS
+        ========================== */}
+
+        <section className="mx-auto max-w-7xl px-5 py-24 lg:px-8">
+
+          <div className="text-center">
+
+            <p className="mb-3 text-xs font-black uppercase tracking-[0.2em] text-violet-600">
+              Community
+            </p>
+
+            <h2 className="text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">
+              Trusted by athletes
+              <span className="text-violet-600">
+                {" "}worldwide
+              </span>
+            </h2>
+
+            <p className="mx-auto mt-4 max-w-xl text-sm leading-6 text-slate-500">
+              Real athletes. Real journeys. Real progress.
+            </p>
+
+          </div>
+
+          <div className="mt-12 grid gap-5 md:grid-cols-3">
+
+            {testimonials.map((testimonial, index) => (
+              <div
+                key={testimonial.name}
+                className="rounded-3xl border border-slate-100 bg-white p-7 shadow-sm hover:-translate-y-1 hover:shadow-xl hover:shadow-slate-100 transition-all"
+              >
+
+                <div className="flex items-center justify-between">
+
+                  <div className="flex gap-1 text-sm text-orange-400">
+                    {"★".repeat(testimonial.rating)}
+                  </div>
+
+                  <span className="text-xs font-medium text-slate-300">
+                    0{index + 1}
+                  </span>
+
+                </div>
+
+                <p className="mt-6 text-sm leading-7 text-slate-600">
+                  “{testimonial.quote}”
+                </p>
+
+                <div className="mt-7 flex items-center gap-3">
+
+                  <div className="flex h-11 w-11 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-blue-500 text-sm font-bold text-white">
+                    {testimonial.name.charAt(0)}
+                  </div>
+
+                  <div>
+
+                    <p className="text-sm font-bold text-slate-950">
+                      {testimonial.name}
+                    </p>
+
+                    <p className="text-xs text-slate-500">
+                      {testimonial.role}
+                    </p>
+
+                  </div>
+
+                </div>
+
+              </div>
+            ))}
+
+          </div>
+
+        </section>
+
+        {/* =========================
+            FINAL CTA
+        ========================== */}
+
+        <section className="px-5 pb-10 lg:px-8">
+
+          <div className="relative mx-auto max-w-7xl overflow-hidden rounded-[32px] bg-gradient-to-r from-violet-600 via-purple-600 to-blue-600 px-7 py-14 text-white shadow-2xl shadow-violet-200 sm:px-12 lg:px-16">
+
+            <div className="absolute -right-20 -top-32 h-80 w-80 rounded-full bg-white/10 blur-3xl" />
+
+            <div className="absolute -bottom-32 left-1/3 h-80 w-80 rounded-full bg-blue-300/20 blur-3xl" />
+
+            <div className="relative flex flex-col justify-between gap-8 lg:flex-row lg:items-center">
+
+              <div>
+
+                <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-xs font-semibold">
+                  <Sparkles size={13} />
+                  YOUR NEXT LEVEL STARTS HERE
+                </div>
+
+                <h2 className="max-w-2xl text-3xl font-black tracking-tight sm:text-4xl">
+                  Ready to start your athletic journey?
+                </h2>
+
+                <p className="mt-4 max-w-xl text-sm leading-6 text-white/75 sm:text-base">
+                  Join thousands of athletes who are training, competing,
+                  learning, and growing together.
+                </p>
+
+              </div>
+
+              <button
+                onClick={handleGetStarted}
+                className="group flex shrink-0 items-center justify-center gap-3 rounded-2xl bg-white px-7 py-4 text-sm font-bold text-slate-950 shadow-xl hover:-translate-y-0.5 transition"
+              >
+                {isLoggedIn
+                  ? "Explore AthleteArena"
+                  : "Join AthleteArena"}
+
+                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-violet-100 text-violet-600 group-hover:translate-x-1 transition">
+                  <ArrowRight size={15} />
+                </span>
+              </button>
+
+            </div>
+
+          </div>
+
+        </section>
+
+      </main>
+
+      {/* =========================
+          FOOTER
+      ========================== */}
+
+      <footer className="border-t border-slate-100 bg-white">
+
+        <div className="mx-auto flex max-w-7xl flex-col gap-5 px-5 py-8 sm:flex-row sm:items-center sm:justify-between lg:px-8">
+
+          <NavLink
+            to="/"
+            className="text-lg font-black text-slate-950"
+          >
+            ATHLETE
+            <span className="text-violet-600">
+              ARENA
+            </span>
+          </NavLink>
+
+          <p className="text-xs text-slate-400">
+            © {new Date().getFullYear()} AthleteArena. All rights reserved.
+          </p>
+
+          <div className="flex items-center gap-5 text-xs font-medium text-slate-500">
+            <span className="cursor-pointer hover:text-violet-600">
+              Privacy
+            </span>
+
+            <span className="cursor-pointer hover:text-violet-600">
+              Terms
+            </span>
+
+            <span className="cursor-pointer hover:text-violet-600">
+              Contact
+            </span>
+          </div>
+
+        </div>
+
+      </footer>
 
     </div>
   );

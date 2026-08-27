@@ -5,7 +5,7 @@ import MainLayout from "./components/layout/MainLayout";
 import AdminLayout from "./components/layout/AdminLayout";
 import ProtectedRoute from "./routes/ProtectedRoute";
 
-import Home from "./Pages/Home/Home";
+import Home from "./Pages/Home/HomePage";
 import Auth from "./Pages/Auth/Auth";
 import SportsCategories from "./Pages/Cotegory/SportsCategories";
 import Community from "./Pages/Community/Community";
@@ -27,6 +27,7 @@ import PageNotFound from "./Pages/NotFound/PageNotFound";
 import MyProfile from "./Pages/MyProfile/MyProfile";
 import GoLive from "./Pages/GoLive/GoLive";
 import CoursePlayer from "./Pages/LearningCenter/CoursePlayer";
+import HomePage from "./Pages/Home/HomePage";
 
 export default function App() {
   return (
@@ -40,7 +41,7 @@ export default function App() {
 
         <Route
           path="/"
-          element={<Home />}
+          element={<HomePage />}
         />
 
         <Route

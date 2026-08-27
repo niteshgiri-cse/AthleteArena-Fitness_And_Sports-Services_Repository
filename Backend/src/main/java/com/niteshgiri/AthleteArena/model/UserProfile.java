@@ -1,12 +1,11 @@
 package com.niteshgiri.AthleteArena.model;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
+
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
@@ -18,19 +17,31 @@ import java.util.Set;
 @NoArgsConstructor
 @Builder
 public class UserProfile {
+
     @Id
     private String id;
-    @NotBlank(message = "User Id is Required Filed")
-    @NotEmpty
+
+    @NotBlank(message = "User ID is required")
     private String userId;
-    @NotBlank(message = "Enter you name ")
+
+    @NotBlank(message = "Enter your name")
     private String name;
+
     private String bio;
+
     private String profileImageUrl;
+
     private String backgroundImageUrl;
-    private Set<String> followers=new HashSet<>();
-    private Set<String> following=new HashSet<>();
-    private Set<String> tags=new HashSet<>();
+
+    @Builder.Default
+    private Set<String> followers = new HashSet<>();
+
+    @Builder.Default
+    private Set<String> following = new HashSet<>();
+
+    @Builder.Default
+    private Set<String> tags = new HashSet<>();
+
     @CreatedDate
     private Instant createdAt;
 }

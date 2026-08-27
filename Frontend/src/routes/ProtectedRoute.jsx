@@ -1,33 +1,55 @@
-  import { Navigate, Outlet } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 
-  const ProtectedRoute = ({ allowedRoles, children }) => {
-    const token = localStorage.getItem("token");
+const ProtectedRoute = ({ allowedRoles = [], children }) => {
+  const token = localStorage.getItem("token");
 
-    if (!token) return <Navigate to="/auth" replace />;
+  if (!token) {
+    return <Navigate to="/auth" replace />;
+  }
 
-    try {
-      const decoded = JSON.parse(atob(token.split(".")[1]));
-      const roles = decoded.roles || [];
+  try {
+    const parts = token.split(".");
 
-      console.log("JWT ROLES:", roles); // debug
+    if (parts.length !== 3) {
+      throw new Error("Invalid JWT");
+    }
 
-      const isAllowed = roles.some((role) =>
-        allowedRoles.includes(role)
-      );
+    const decoded = JSON.parse(atob(parts[1]));
 
-      if (!isAllowed) {
-        console.log("BLOCKED ❌");
-        return <Navigate to="/" replace />;
-      }
+    if (!decoded.exp || decoded.exp * 1000 <= Date.now()) {
+      localStorage.removeItem("token");
+      localStorage.removeItem("roles");
 
-      console.log("ALLOWED ✅");
-
-      // 🔥 IMPORTANT FIX
-      return children ? children : <Outlet />;
-    } catch (err) {
-      console.error("TOKEN ERROR:", err);
       return <Navigate to="/auth" replace />;
     }
-  };
 
-  export default ProtectedRoute;
+    let roles = decoded.roles || [];
+
+    if (typeof roles === "string") {
+      roles = roles
+        .replace("[", "")
+        .replace("]", "")
+        .split(",")
+        .map((role) => role.trim());
+    }
+
+    const isAllowed = roles.some((role) =>
+      allowedRoles.includes(role)
+    );
+
+    if (!isAllowed) {
+      return <Navigate to="/" replace />;
+    }
+
+    return children ? children : <Outlet />;
+  } catch (error) {
+    console.error("TOKEN ERROR:", error);
+
+    localStorage.removeItem("token");
+    localStorage.removeItem("roles");
+
+    return <Navigate to="/auth" replace />;
+  }
+};
+
+export default ProtectedRoute;

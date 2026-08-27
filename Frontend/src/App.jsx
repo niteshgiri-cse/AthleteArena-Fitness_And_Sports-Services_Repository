@@ -7,7 +7,6 @@ import ProtectedRoute from "./routes/ProtectedRoute";
 
 import Home from "./Pages/Home/Home";
 import Auth from "./Pages/Auth/Auth";
-
 import SportsCategories from "./Pages/Cotegory/SportsCategories";
 import Community from "./Pages/Community/Community";
 import RecentNews from "./Pages/RecentNews/RecentNews";
@@ -22,68 +21,155 @@ import { AdminNotification } from "./Pages/Admin/AdminNotification";
 import RegisterEvent from "./Pages/Admin/RegisterEvent";
 import ManageUsers from "./Pages/Admin/ManageUsers";
 import Reports from "./Pages/Admin/Reports";
+import AdminUpload from "./Pages/Admin/AdminUpload";
 
 import PageNotFound from "./Pages/NotFound/PageNotFound";
 import MyProfile from "./Pages/MyProfile/MyProfile";
 import GoLive from "./Pages/GoLive/GoLive";
-import AdminUpload from "./Pages/Admin/AdminUpload";
 import CoursePlayer from "./Pages/LearningCenter/CoursePlayer";
 
 export default function App() {
   return (
     <>
-      <ToastContainer position="top-right" autoClose={3000} />
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+      />
 
       <Routes>
 
-        {/* 🔓 PUBLIC */}
-        <Route path="/auth" element={<Auth />} />
-
-        {/* 🌐 MAIN LAYOUT */}
-        <Route element={<MainLayout />}>
-
-          <Route path="/" element={<Home />} />
-
-          {/* 🔐 USER + ADMIN */}
-          <Route element={<ProtectedRoute allowedRoles={["USER", "ADMIN"]} />}>
-            <Route path="/userProfile" element={<MyProfile />} />
-            <Route path="/sport-category" element={<SportsCategories />} />
-            <Route path="/community" element={<Community />} />
-            <Route path="/recent-new" element={<RecentNews />} />
-            <Route path="/live-events" element={<Event />} />
-            <Route path="/services" element={<Services />} />
-            <Route path="/live-learning" element={<LearningCenter />} />
-            <Route path="/athlete-blogs" element={<AthleteBlogs />} />
-            <Route path="/training-guides" element={<TrainingGuides />} />
-          </Route>
-
-        </Route>
-
-        {/* 🎥 FULLSCREEN */}
-        <Route element={<ProtectedRoute allowedRoles={["USER", "ADMIN"]} />}>
-          <Route path="/course/:id" element={<CoursePlayer />} />
-          <Route path="/live/:roomId" element={<GoLive />} />
-        </Route>
-
-        {/* 🔥 FINAL ADMIN ROUTE FIX */}
         <Route
-          path="/admin/*"
+          path="/"
+          element={<Home />}
+        />
+
+        <Route
+          path="/auth"
+          element={<Auth />}
+        />
+
+        <Route
           element={
-            <ProtectedRoute allowedRoles={["ADMIN"]}>
+            <ProtectedRoute
+              allowedRoles={["USER", "ADMIN"]}
+            >
+              <MainLayout />
+            </ProtectedRoute>
+          }
+        >
+          <Route
+            path="/userProfile"
+            element={<MyProfile />}
+          />
+
+          <Route
+            path="/sport-category"
+            element={<SportsCategories />}
+          />
+
+          <Route
+            path="/community"
+            element={<Community />}
+          />
+
+          <Route
+            path="/recent-new"
+            element={<RecentNews />}
+          />
+
+          <Route
+            path="/live-events"
+            element={<Event />}
+          />
+
+          <Route
+            path="/services"
+            element={<Services />}
+          />
+
+          <Route
+            path="/live-learning"
+            element={<LearningCenter />}
+          />
+
+          <Route
+            path="/athlete-blogs"
+            element={<AthleteBlogs />}
+          />
+
+          <Route
+            path="/training-guides"
+            element={<TrainingGuides />}
+          />
+        </Route>
+
+        <Route
+          path="/course/:id"
+          element={
+            <ProtectedRoute
+              allowedRoles={["USER", "ADMIN"]}
+            >
+              <CoursePlayer />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/live/:roomId"
+          element={
+            <ProtectedRoute
+              allowedRoles={["USER", "ADMIN"]}
+            >
+              <GoLive />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute
+              allowedRoles={["ADMIN"]}
+            >
               <AdminLayout />
             </ProtectedRoute>
           }
         >
-          <Route index element={<Dashboard />} />
-          <Route path="notification" element={<AdminNotification />} />
-          <Route path="register-event" element={<RegisterEvent />} />
-          <Route path="bookings" element={<ManageUsers />} />
-          <Route path="reports" element={<Reports />} />
-          <Route path="upload-course" element={<AdminUpload />} />
+          <Route
+            index
+            element={<Dashboard />}
+          />
+
+          <Route
+            path="notification"
+            element={<AdminNotification />}
+          />
+
+          <Route
+            path="register-event"
+            element={<RegisterEvent />}
+          />
+
+          <Route
+            path="bookings"
+            element={<ManageUsers />}
+          />
+
+          <Route
+            path="reports"
+            element={<Reports />}
+          />
+
+          <Route
+            path="upload-course"
+            element={<AdminUpload />}
+          />
         </Route>
 
-        {/* ❌ 404 */}
-        <Route path="*" element={<PageNotFound />} />
+        <Route
+          path="*"
+          element={<PageNotFound />}
+        />
 
       </Routes>
     </>

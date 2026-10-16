@@ -1,12 +1,15 @@
 spring:
   application:
     name: AthleteArena
+
   ai:
     google:
       genai:
         api-key: ${GEMINI_API_KEY}
         chat:
-          model: ${CHAT_MODEL:gemini-3.6-flash}
+          options:
+            model: gemini-3.8-flash
+
   data:
     mongodb:
       uri: ${MONGO_URI}
@@ -53,4 +56,3 @@ app:
 
 news:
   api-key: ${NEWS_API_KEY}
-

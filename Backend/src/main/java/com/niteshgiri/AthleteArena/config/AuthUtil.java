@@ -43,7 +43,7 @@ public class AuthUtil {
         return claims.getSubject();
     }
 
-    // 🔥 ADD THIS METHOD (FINAL FIX)
+
     public Claims getAllClaims(String token){
         return Jwts.parser()
                 .verifyWith(getSecretkey())

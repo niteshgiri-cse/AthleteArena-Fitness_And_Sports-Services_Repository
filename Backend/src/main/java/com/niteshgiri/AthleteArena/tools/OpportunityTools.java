@@ -1,6 +1,5 @@
 package com.niteshgiri.AthleteArena.tools;
 
-
 import com.niteshgiri.AthleteArena.service.Interface.OpportunityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.ai.tool.annotation.Tool;
@@ -22,6 +21,21 @@ public class OpportunityTools {
             String sport,
             String location
     ) {
-        return opportunityService.searchOpportunities(sport, location);
+        try {
+            String result =
+                    opportunityService.searchOpportunities(
+                            sport,
+                            location
+                    );
+
+            if (result == null || result.isBlank()) {
+                return "No opportunities are currently available for the requested sport or location.";
+            }
+
+            return result;
+
+        } catch (Exception e) {
+            return "No opportunity data is currently available on Athlete Arena.";
+        }
     }
 }

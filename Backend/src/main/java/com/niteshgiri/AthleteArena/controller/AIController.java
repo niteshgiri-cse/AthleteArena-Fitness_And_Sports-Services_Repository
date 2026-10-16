@@ -2,6 +2,7 @@ package com.niteshgiri.AthleteArena.controller;
 
 import com.niteshgiri.AthleteArena.service.imp.ChatService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,11 +13,16 @@ public class AIController {
 
     private final ChatService chatService;
 
-
-    @PostMapping
-    public ResponseEntity<String> chat(@RequestHeader("Conversation-Id") String conversationId , @RequestBody String message){
-        return ResponseEntity.ok(chatService.chat(message,conversationId));
+    @PostMapping(
+            value = "/live",
+            consumes = MediaType.TEXT_PLAIN_VALUE,
+            produces = MediaType.TEXT_PLAIN_VALUE
+    )
+    public ResponseEntity<String> chat(
+            @RequestBody String message
+    ) {
+        return ResponseEntity.ok(
+                chatService.chat(message)
+        );
     }
-
-
 }

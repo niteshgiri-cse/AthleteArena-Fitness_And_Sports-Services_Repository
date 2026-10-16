@@ -9,9 +9,7 @@ export default function AIChatbot() {
 
   const dispatch = useDispatch();
 
-  const { messages, loading } = useSelector(
-    (state) => state.chat
-  );
+  const { messages, loading } = useSelector((state) => state.chat);
 
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
@@ -30,7 +28,7 @@ export default function AIChatbot() {
     }
   }, [open]);
 
-  const sendMessage = () => {
+  const sendMessage = async () => {
     const trimmedMessage = message.trim();
 
     if (!trimmedMessage || loading) {
@@ -39,15 +37,14 @@ export default function AIChatbot() {
 
     const token = localStorage.getItem("token");
 
-    if (!token) {
+    if (!token || token === "null" || token === "undefined") {
+      console.error("User is not authenticated");
       return;
     }
 
-    dispatch(
-      sendChatMessageAction(trimmedMessage)
-    );
-
     setMessage("");
+
+    await dispatch(sendChatMessageAction(trimmedMessage));
   };
 
   const handleKeyDown = (event) => {
@@ -65,11 +62,7 @@ export default function AIChatbot() {
         className="fixed bottom-6 right-6 z-[80] flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-violet-600 via-purple-600 to-blue-500 text-white shadow-2xl shadow-violet-300/50 transition-all duration-300 hover:scale-105 active:scale-95"
         aria-label="Open AthleteArena AI"
       >
-        {open ? (
-          <X size={23} />
-        ) : (
-          <MessageCircle size={24} />
-        )}
+        {open ? <X size={23} /> : <MessageCircle size={24} />}
 
         {!open && (
           <span className="absolute right-0 top-0 h-3.5 w-3.5 rounded-full border-2 border-white bg-emerald-400" />
@@ -84,7 +77,6 @@ export default function AIChatbot() {
         }`}
       >
         <div className="overflow-hidden rounded-[26px] border border-slate-200 bg-white shadow-[0_25px_80px_rgba(15,23,42,0.20)]">
-
           <div className="relative overflow-hidden bg-gradient-to-br from-violet-600 via-purple-600 to-blue-600 px-5 py-4 text-white">
             <div className="absolute -right-10 -top-10 h-28 w-28 rounded-full bg-white/10 blur-xl" />
 
@@ -95,9 +87,7 @@ export default function AIChatbot() {
 
               <div className="flex-1">
                 <div className="flex items-center gap-2">
-                  <h3 className="text-sm font-black">
-                    AthleteArena AI
-                  </h3>
+                  <h3 className="text-sm font-black">AthleteArena AI</h3>
 
                   <Sparkles size={13} />
                 </div>
@@ -105,9 +95,7 @@ export default function AIChatbot() {
                 <div className="mt-1 flex items-center gap-1.5">
                   <span className="h-1.5 w-1.5 rounded-full bg-emerald-300" />
 
-                  <span className="text-[11px] text-white/75">
-                    AI Coach
-                  </span>
+                  <span className="text-[11px] text-white/75">AI Coach</span>
                 </div>
               </div>
 
@@ -123,17 +111,13 @@ export default function AIChatbot() {
 
           <div className="h-[390px] overflow-y-auto bg-slate-50/70 px-4 py-4">
             <div className="space-y-4">
-
               {messages.map((item) => (
                 <div
                   key={item.id}
                   className={`flex items-end gap-2 ${
-                    item.type === "user"
-                      ? "justify-end"
-                      : "justify-start"
+                    item.type === "user" ? "justify-end" : "justify-start"
                   }`}
                 >
-
                   {item.type === "ai" && (
                     <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-violet-100 text-violet-600">
                       <Bot size={14} />
@@ -160,14 +144,12 @@ export default function AIChatbot() {
 
               {loading && (
                 <div className="flex items-end gap-2">
-
                   <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-violet-100 text-violet-600">
                     <Bot size={14} />
                   </div>
 
                   <div className="rounded-2xl rounded-bl-md border border-slate-100 bg-white px-4 py-3 shadow-sm">
                     <div className="flex items-center gap-1.5">
-
                       <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-violet-400" />
 
                       <span
@@ -187,51 +169,41 @@ export default function AIChatbot() {
                       <span className="ml-1 text-[11px] text-slate-400">
                         AI is thinking...
                       </span>
-
                     </div>
                   </div>
                 </div>
               )}
 
               <div ref={messagesEndRef} />
-
             </div>
           </div>
 
           <div className="border-t border-slate-100 bg-white p-3">
-
             <div className="mb-3 flex gap-2 overflow-x-auto pb-1">
-              {[
-                "Training Plan",
-                "Improve Performance",
-                "Find Events",
-              ].map((prompt) => (
-                <button
-                  key={prompt}
-                  type="button"
-                  disabled={loading}
-                  onClick={() => {
-                    if (!loading) {
-                      dispatch(
-                        sendChatMessageAction(prompt)
-                      );
-                    }
-                  }}
-                  className="shrink-0 rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-[10px] font-semibold text-slate-600 transition hover:border-violet-200 hover:bg-violet-50 hover:text-violet-600 disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  {prompt}
-                </button>
-              ))}
+              {["Training Plan", "Improve Performance", "Find Events"].map(
+                (prompt) => (
+                  <button
+                    key={prompt}
+                    type="button"
+                    disabled={loading}
+                    onClick={() => {
+                      if (!loading) {
+                        dispatch(sendChatMessageAction(prompt));
+                      }
+                    }}
+                    className="shrink-0 rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-[10px] font-semibold text-slate-600 transition hover:border-violet-200 hover:bg-violet-50 hover:text-violet-600 disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    {prompt}
+                  </button>
+                ),
+              )}
             </div>
 
             <div className="flex items-end gap-2 rounded-2xl border border-slate-200 bg-slate-50 p-1.5 transition focus-within:border-violet-300 focus-within:bg-white focus-within:ring-4 focus-within:ring-violet-50">
-
               <textarea
                 ref={inputRef}
                 value={message}
-                onChange={(event) =>
-                  setMessage(event.target.value)
-                }
+                onChange={(event) => setMessage(event.target.value)}
                 onKeyDown={handleKeyDown}
                 disabled={loading}
                 rows={1}
@@ -248,13 +220,11 @@ export default function AIChatbot() {
               >
                 <Send size={16} />
               </button>
-
             </div>
 
             <p className="mt-2 text-center text-[9px] text-slate-400">
               AthleteArena AI can make mistakes. Verify important information.
             </p>
-
           </div>
         </div>
       </div>

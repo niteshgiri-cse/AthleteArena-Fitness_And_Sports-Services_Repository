@@ -17,6 +17,16 @@ public class SportsContentTools {
             match-related articles or sports content available on the website.
             """)
     public String searchSportsContent(String sport) {
-        return sportsContentService.searchSportsContent(sport);
+        try {
+            String result = sportsContentService.searchSportsContent(sport);
+
+            if (result == null || result.isBlank()) {
+                return "No sports content is currently available for the requested sport.";
+            }
+
+            return result;
+        } catch (Exception e) {
+            return "Sports content is currently unavailable.";
+        }
     }
 }

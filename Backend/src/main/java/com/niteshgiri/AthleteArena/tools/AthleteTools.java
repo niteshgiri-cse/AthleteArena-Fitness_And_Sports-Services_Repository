@@ -17,7 +17,17 @@ public class AthleteTools {
             dashboard, current level, sport, or profile information.
             """)
     public String getAthleteProfile(String athleteId) {
-        return athleteService.getAthleteProfile(athleteId);
+        try {
+            String result = athleteService.getAthleteProfile(athleteId);
+
+            if (result == null || result.isBlank()) {
+                return "No athlete profile information is currently available.";
+            }
+
+            return result;
+        } catch (Exception e) {
+            return "Athlete profile information is currently unavailable.";
+        }
     }
 
     @Tool(description = """
@@ -26,7 +36,17 @@ public class AthleteTools {
             progress, modules completed, or training consistency.
             """)
     public String getTrainingProgress(String athleteId) {
-        return athleteService.getTrainingProgress(athleteId);
+        try {
+            String result = athleteService.getTrainingProgress(athleteId);
+
+            if (result == null || result.isBlank()) {
+                return "No training progress data is currently available.";
+            }
+
+            return result;
+        } catch (Exception e) {
+            return "Training progress information is currently unavailable.";
+        }
     }
 
     @Tool(description = """
@@ -36,6 +56,16 @@ public class AthleteTools {
             scores, accuracy, speed, stamina, or performance history.
             """)
     public String getPerformance(String athleteId) {
-        return athleteService.getPerformance(athleteId);
+        try {
+            String result = athleteService.getPerformance(athleteId);
+
+            if (result == null || result.isBlank()) {
+                return "No performance statistics are currently available.";
+            }
+
+            return result;
+        } catch (Exception e) {
+            return "Performance statistics are currently unavailable.";
+        }
     }
 }

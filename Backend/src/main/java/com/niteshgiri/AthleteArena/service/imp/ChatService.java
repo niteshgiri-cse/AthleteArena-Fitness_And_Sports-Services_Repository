@@ -2,7 +2,6 @@ package com.niteshgiri.AthleteArena.service.imp;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -11,9 +10,18 @@ public class ChatService {
 
     private final ChatClient chatClient;
 
-    public String chat(String query,String conversationId){
-        return chatClient.prompt().user(query).advisors(a->a.param(ChatMemory.CONVERSATION_ID,conversationId)).call().content();
+    public String chat(String query) {
+
+        try {
+            return chatClient
+                    .prompt()
+                    .user(query)
+                    .call()
+                    .content();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Gemini API failed: " + e.getMessage(), e);
+        }
     }
-
-
 }

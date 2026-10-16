@@ -1,11 +1,15 @@
+
 import { createSlice } from "@reduxjs/toolkit";
+
+const WELCOME_MESSAGE =
+  "Hey! 👋 I'm AthleteArena AI. How can I help you today?";
 
 const initialState = {
   messages: [
     {
       id: 1,
       type: "ai",
-      text: "Hey! 👋 I'm AthleteArena AI. How can I help you today?",
+      text: WELCOME_MESSAGE,
     },
   ],
   loading: false,
@@ -26,13 +30,15 @@ const chatSlice = createSlice({
       state.loading = false;
       state.error = null;
 
+      const response = action.payload;
+
       state.messages.push({
         id: Date.now(),
         type: "ai",
         text:
-          typeof action.payload === "string"
-            ? action.payload
-            : JSON.stringify(action.payload),
+          typeof response === "string"
+            ? response
+            : JSON.stringify(response ?? ""),
       });
     },
 
@@ -46,10 +52,12 @@ const chatSlice = createSlice({
 
       state.error = message;
 
+      // Display the friendly error directly inside the chat
       state.messages.push({
         id: Date.now(),
         type: "ai",
         text: message,
+        isError: true,
       });
     },
 
@@ -66,10 +74,11 @@ const chatSlice = createSlice({
         {
           id: 1,
           type: "ai",
-          text: "Hey! 👋 I'm AthleteArena AI. How can I help you today?",
+          text: WELCOME_MESSAGE,
         },
       ];
 
+      state.loading = false;
       state.error = null;
     },
   },

@@ -1,27 +1,36 @@
+
 import axios from "axios";
 import BASE_URL from "@/config/api";
 
 const chatAPI = axios.create({
   baseURL: BASE_URL,
+  headers: {
+    Accept: "text/plain",
+  },
+  timeout: 60000,
 });
 
-chatAPI.interceptors.request.use((req) => {
-  const token = localStorage.getItem("token");
+chatAPI.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("token");
 
-  if (token && token !== "null" && token !== "undefined") {
-    req.headers.Authorization = `Bearer ${token}`;
-  }
+    if (token && token !== "null" && token !== "undefined") {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
 
-  return req;
-});
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
 
-export const sendChatMessageAPI = async (message, conversationId) => {
-  const res = await chatAPI.post("/chat/live", message, {
+export const sendChatMessageAPI = async (message) => {
+  const response = await chatAPI.post("/chat/live", message, {
     headers: {
       "Content-Type": "text/plain",
-      "Conversation-Id": conversationId,
     },
   });
 
-  return res.data;
+  return response.data;
 };
+
+export default chatAPI;
